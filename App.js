@@ -35,7 +35,8 @@ export default class App extends Component {
       location: {
         coords: {},
         timestamp: null
-      }
+      },
+      speedChart: []
     };
 
     this.gpsWatchSuccess = this.gpsWatchSuccess.bind(this);
@@ -79,6 +80,9 @@ export default class App extends Component {
       coords: crd,
       timestamp: this.dateFromTimestap(position.timestamp)
     }});
+
+    // console.log(crd.speed, this.dateFromTimestap(position.timestamp));
+    this.setSpeedChart(crd.speed, this.dateFromTimestap(position.timestamp));
   }
 
   gpsError(error) {
@@ -94,6 +98,12 @@ export default class App extends Component {
 
   getSpeedInKm(speedInM) {
     return speedInM * 3600 / 1000;
+  }
+
+  setSpeedChart(speed, timestamp) {
+    let _speedChart = this.state.speedChart;
+    _speedChart.push({speed: speed, timestamp: timestamp});
+    this.setState({speedChart: _speedChart});
   }
 }
 
