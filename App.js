@@ -1,13 +1,6 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import { LineChart, Grid } from 'react-native-svg-charts';
 
 
 // отключаем варнинги
@@ -21,11 +14,55 @@ const Value = ({name, value}) => (
   </View>
 )
 
+class LineChartExample extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      speed: [],
+      time: []
+    };
+  }
+
+  getAxis() {
+    this.props.data.forEach((el) => {
+      this._setState('speed', el.speed)
+      this._setState('time', el.timestamp)
+      // this.state.speed.push(el.speed);
+      // this.state.time.push(el.timestamp);
+    });
+  }
+
+  componentDidMount() {
+    // this.getAxis();
+  }
+
+  /*shouldComponentUpdate() {
+    this.getAxis();
+  }*/
+
+  render() {
+    const data = [ 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80 ]
+
+    return (
+      <LineChart
+        style={{ height: 200 }}
+        data={ this.props.speed }
+        svg={{ stroke: 'rgb(134, 65, 244)' }}
+        contentInset={{ top: 20, bottom: 20 }}
+      >
+        <Grid/>
+      </LineChart>
+    )
+  }
+}
+
 export default class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      success: false,
       gpsOptions: {
         enableHighAccuracy: true,
         timeout: 15000,
@@ -36,13 +73,27 @@ export default class App extends Component {
         coords: {},
         timestamp: null
       },
-      speedChart: []
+      speed: [],
+      time: []
     };
 
     this.gpsWatchSuccess = this.gpsWatchSuccess.bind(this);
 
     // this.getPosition();
+  }
+
+  _setState(name, val) {
+    let temp = this.state[name];
+    temp.push(val);
+    this.setState({name: temp});
+  }
+
+  componentDidMount() {
     this.watchPosition();
+  }
+
+  componentWillUnmount() {
+    this.watchID && this.stopWatchPosition();
   }
 
   render() {
@@ -56,6 +107,8 @@ export default class App extends Component {
         <Value name="Направление: " value={this.state.location.coords.heading} />
         <Value name="Скорость: " value={this.getSpeedInKm(this.state.location.coords.speed)} />
         <Value name="Время: " value={this.state.location.timestamp} />
+
+        <LineChartExample speed={this.state.speed} time={this.state.time} />
       </View>
     );
   }
@@ -76,13 +129,21 @@ export default class App extends Component {
   gpsWatchSuccess(position) {
     let crd = position.coords;
 
+    if(!this.success) {
+      this.setState({success: true});
+    }
+
     this.setState({location: {
       coords: crd,
       timestamp: this.dateFromTimestap(position.timestamp)
     }});
 
     // console.log(crd.speed, this.dateFromTimestap(position.timestamp));
-    this.setSpeedChart(crd.speed, this.dateFromTimestap(position.timestamp));
+    // this.setSpeedChart(this.getSpeedInKm(crd.speed), this.dateFromTimestap(position.timestamp));
+    // console.log(this.state.speedChart);
+
+    this._setState('speed', this.getSpeedInKm(crd.speed))
+    this._setState('time', this.dateFromTimestap(position.timestamp))
   }
 
   gpsError(error) {
@@ -92,7 +153,9 @@ export default class App extends Component {
 
   dateFromTimestap(timestamp) {
     var d = new Date(timestamp);
-    var sec = (d.getSeconds() < 10) ? ('0' + d.getSeconds()) : d.getSeconds()
+    var hours = (d.getHours() < 10) ? ('0' + d.getHours()) : d.getHours();
+    var sec = (d.getMinutes() < 10) ? ('0' + d.getMinutes()) : d.getMinutes();
+    var sec = (d.getSeconds() < 10) ? ('0' + d.getSeconds()) : d.getSeconds();
     return d.getHours() + ':' + d.getMinutes() + ':' + sec;
   }
 
