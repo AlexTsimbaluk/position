@@ -14,9 +14,21 @@ const Value = ({name, value}) => (
   </View>
 )
 
+const ChartSpeed = ({speed, time}) => (
+  <LineChart
+    style={{ height: 200 }}
+    data={ time }
+    svg={{ stroke: 'rgb(134, 65, 244)' }}
+    contentInset={{ top: 20, bottom: 20 }}
+  >
+    <Grid/>
+  </LineChart>
+)
+
 class LineChartExample extends React.PureComponent {
   constructor(props) {
     super(props);
+    console.log(props);
 
     this.state = {
       speed: [],
@@ -24,14 +36,7 @@ class LineChartExample extends React.PureComponent {
     };
   }
 
-  getAxis() {
-    this.props.data.forEach((el) => {
-      this._setState('speed', el.speed)
-      this._setState('time', el.timestamp)
-      // this.state.speed.push(el.speed);
-      // this.state.time.push(el.timestamp);
-    });
-  }
+  
 
   componentDidMount() {
     // this.getAxis();
@@ -42,12 +47,17 @@ class LineChartExample extends React.PureComponent {
   }*/
 
   render() {
-    const data = [ 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80 ]
+    const data = [ 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80 ];
+
+    // console.log(this.props.speed.map(el => (el + Math.random * 10)));
+    console.log(this.props.speed);
+    console.log(this.props.time);
 
     return (
+        // data={ this.props.speed.map(el => (el + Math.random * 10)) }
       <LineChart
         style={{ height: 200 }}
-        data={ this.props.speed }
+        data={ this.props.time }
         svg={{ stroke: 'rgb(134, 65, 244)' }}
         contentInset={{ top: 20, bottom: 20 }}
       >
@@ -109,6 +119,7 @@ export default class App extends Component {
         <Value name="Время: " value={this.state.location.timestamp} />
 
         <LineChartExample speed={this.state.speed} time={this.state.time} />
+        <ChartSpeed speed={this.state.speed} time={this.state.time} />
       </View>
     );
   }
@@ -140,10 +151,9 @@ export default class App extends Component {
 
     // console.log(crd.speed, this.dateFromTimestap(position.timestamp));
     // this.setSpeedChart(this.getSpeedInKm(crd.speed), this.dateFromTimestap(position.timestamp));
-    // console.log(this.state.speedChart);
 
-    this._setState('speed', this.getSpeedInKm(crd.speed))
-    this._setState('time', this.dateFromTimestap(position.timestamp))
+    this._setState('speed', this.getSpeedInKm(crd.speed));
+    this._setState('time', this.dateFromTimestap(position.timestamp));
   }
 
   gpsError(error) {
@@ -154,9 +164,10 @@ export default class App extends Component {
   dateFromTimestap(timestamp) {
     var d = new Date(timestamp);
     var hours = (d.getHours() < 10) ? ('0' + d.getHours()) : d.getHours();
-    var sec = (d.getMinutes() < 10) ? ('0' + d.getMinutes()) : d.getMinutes();
+    var min = (d.getMinutes() < 10) ? ('0' + d.getMinutes()) : d.getMinutes();
     var sec = (d.getSeconds() < 10) ? ('0' + d.getSeconds()) : d.getSeconds();
-    return d.getHours() + ':' + d.getMinutes() + ':' + sec;
+    // return hours + ':' + min + ':' + sec;
+    return d.getHours() + d.getMinutes() + d.getSeconds();
   }
 
   getSpeedInKm(speedInM) {
