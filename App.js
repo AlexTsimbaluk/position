@@ -80,10 +80,6 @@ export default class App extends Component {
       speed: [],
       time: []
     };
-
-    this.gpsWatchSuccess = this.gpsWatchSuccess.bind(this);
-
-    // this.getPosition();
   }
 
   _setState(name, val) {
@@ -117,7 +113,7 @@ export default class App extends Component {
     }
   }
 
-  gpsWatchSuccess(position) {
+  gpsWatchSuccess = (position) => {
     let crd = position.coords;
 
     if(!this.success) {
@@ -156,25 +152,31 @@ export default class App extends Component {
         {
           !!(this.state.watchID != null)
           ?
-          <View>
-            <Value name="Широта: " value={this.state.location.coords.latitude} />
-            <Value name="Долгота: " value={this.state.location.coords.longitude} />
-            <Value name="Высота: " value={this.state.location.coords.altitude} />
-            <Value name="Точность: " value={this.state.location.coords.accuracy} />
-            <Value name="Точность высоты: " value={this.state.location.coords.altitudeAccuracy} />
-            <Value name="Направление: " value={this.state.location.coords.heading} />
-            <Value name="Скорость: " value={this.getSpeedInKm(this.state.location.coords.speed)} />
-            <Value name="Время: " value={this.state.location.timestamp} />
+          <View style={{flex: 1}}>
+            <View style={{flex: 0}}>
+              <Value name="Широта: " value={this.state.location.coords.latitude} />
+              <Value name="Долгота: " value={this.state.location.coords.longitude} />
+              <Value name="Высота: " value={this.state.location.coords.altitude} />
+              <Value name="Точность: " value={this.state.location.coords.accuracy} />
+              <Value name="Точность высоты: " value={this.state.location.coords.altitudeAccuracy} />
+              <Value name="Направление: " value={this.state.location.coords.heading} />
+              <Value name="Скорость: " value={this.getSpeedInKm(this.state.location.coords.speed)} />
+              <Value name="Время: " value={this.state.location.timestamp} />
+            </View>
 
-            <LineChartExample speed={this.state.speed} time={this.state.time} />
-            <ChartSpeed speed={this.state.speed} time={this.state.time} />
+            <View style={{flexGrow: 1}}>
+              <LineChartExample speed={this.state.speed} time={this.state.time} />
+              {/*<ChartSpeed speed={this.state.speed} time={this.state.time} />*/}
+            </View>
 
-            <Button
-              onPress={this.stopWatchPosition}
-              title="Stop watch position"
-              color="#ff0000"
-              style={styles.button}
-            />
+            <View style={{flex: 0}}>
+              <Button
+                onPress={this.stopWatchPosition}
+                title="Stop watch position"
+                color="#ff0000"
+                style={styles.button}
+              />
+            </View>
           </View>
           :
           <View>
