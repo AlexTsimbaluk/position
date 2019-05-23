@@ -105,12 +105,14 @@ export default class App extends Component {
   }
 
   watchPosition = () => {
-    this.watchID = navigator.geolocation.watchPosition(this.gpsWatchSuccess, this.gpsError, this.state.gpsOptions);
+    // this.state.watchID = navigator.geolocation.watchPosition(this.gpsWatchSuccess, this.gpsError, this.state.gpsOptions);
+    this.setState({watchID: navigator.geolocation.watchPosition(this.gpsWatchSuccess, this.gpsError, this.state.gpsOptions)});
+      // this._setState('watchID', 111);
   }
 
   stopWatchPosition = () => {
-    if(this.watchID) {
-      navigator.geolocation.clearWatch(this.watchID);
+    if(this.state.watchID != null) {
+      navigator.geolocation.clearWatch(this.state.watchID);
       this.setState({watchID: null});
     }
   }
@@ -149,11 +151,10 @@ export default class App extends Component {
   }
 
   render() {
-          // !!(this.state.watchID !== null)
     return (
       <ScrollView style={styles.container}>
         {
-          !!(this.state.speed.length)
+          !!(this.state.watchID != null)
           ?
           <View>
             <Value name="Широта: " value={this.state.location.coords.latitude} />
