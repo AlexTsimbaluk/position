@@ -97,7 +97,7 @@ export default class App extends Component {
   }
 
   componentWillUnmount() {
-    this.watchID && this.stopWatchPosition();
+    this.stopWatchPosition();
   }
 
   getPosition() {
