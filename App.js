@@ -158,7 +158,13 @@ export default class App extends Component {
               <Value name="Долгота: " value={this.state.location.coords.longitude} />
               <Value name="Высота: " value={this.state.location.coords.altitude} />
               <Value name="Точность: " value={this.state.location.coords.accuracy} />
-              <Value name="Точность высоты: " value={this.state.location.coords.altitudeAccuracy} />
+              {
+                !!(this.state.location.coords.altitudeAccuracy)
+                ?
+                <Value name="Точность высоты: " value={this.state.location.coords.altitudeAccuracy} />
+                :
+                <View></View>
+              }
               <Value name="Направление: " value={this.state.location.coords.heading} />
               <Value name="Скорость: " value={this.getSpeedInKm(this.state.location.coords.speed)} />
               <Value name="Время: " value={this.state.location.timestamp} />
